@@ -21,6 +21,11 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        Move();
+    }
+
+    private void Move()
+    {
         float horz = Input.GetAxisRaw("Horizontal");
         float vert = Input.GetAxisRaw("Vertical");
         if (Mathf.Abs(horz) > 0 || Mathf.Abs(vert) > 0)
