@@ -5,10 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class DungeonManager : MonoBehaviour
 {
-    public GameObject[] randomItems;
+    public GameObject[] randomItems, randomEnemies;
     public GameObject floorPrefab, wallPrefab, tilePrefab, exitPrefab;
     [Range(50, 1000)] public int totalFloorCount;
     [Range(0, 100)] public int itemSpawnPercent;
+    [Range(0, 100)] public int enemySpawnPercent;
 
     [HideInInspector] public float minX, maxX, minY, maxY;
 
@@ -85,11 +86,6 @@ public class DungeonManager : MonoBehaviour
             yield return null;
         }
         CreateExitDoorway();
-        SpawnRandomItems();
-    }
-
-    private void SpawnRandomItems()
-    {
         Vector2 hitSize = Vector2.one * 0.8f;
         for (int x = (int)minX - 2; x <= (int)maxX + 2; x++)
         {
@@ -104,19 +100,40 @@ public class DungeonManager : MonoBehaviour
                         Collider2D hitRight = Physics2D.OverlapBox(new Vector2(x + 1, y), hitSize, 0, wallMask);
                         Collider2D hitBottom = Physics2D.OverlapBox(new Vector2(x, y - 1), hitSize, 0, wallMask);
                         Collider2D hitLeft = Physics2D.OverlapBox(new Vector2(x - 1, y), hitSize, 0, wallMask);
-                        if ((hitBottom || hitRight || hitBottom || hitLeft) && !(hitTop && hitBottom) && !(hitLeft && hitRight))
-                        {
-                            int roll = Random.Range(0, 101);
-                            if (roll <= itemSpawnPercent)
-                            {
-                                int itemIndex = Random.Range(0, randomItems.Length);
-                                GameObject goItem = Instantiate(randomItems[itemIndex], hitFloor.transform.position, Quaternion.identity) as GameObject;
-                                goItem.name = randomItems[itemIndex].name;
-                                goItem.transform.SetParent(hitFloor.transform);
-                            }
-                        }
+                        SpawnRandomItems(hitFloor, hitTop, hitRight, hitBottom, hitLeft);
+                        SpawnRandomEnemies(hitFloor, hitTop, hitRight, hitBottom, hitLeft);
                     }
                 }
+            }
+        }
+    }
+
+    private void SpawnRandomEnemies(Collider2D hitFloor, Collider2D hitTop, Collider2D hitRight, Collider2D hitBottom, Collider2D hitLeft)
+    {
+        if(!hitTop && !hitBottom && !hitLeft && !hitRight)
+        {
+            int roll = Random.Range(1, 101);
+            if (roll <= enemySpawnPercent)
+            {
+                int enemyIndex = Random.Range(0, randomEnemies.Length);
+                GameObject goEnemy = Instantiate(randomEnemies[enemyIndex], hitFloor.transform.position, Quaternion.identity) as GameObject;
+                goEnemy.name = randomEnemies[enemyIndex].name;
+                goEnemy.transform.SetParent(hitFloor.transform);
+            }
+        }
+    }
+
+    private void SpawnRandomItems(Collider2D hitFloor, Collider2D hitTop, Collider2D hitRight, Collider2D hitBottom, Collider2D hitLeft)
+    {
+        if ((hitBottom || hitRight || hitBottom || hitLeft) && !(hitTop && hitBottom) && !(hitLeft && hitRight))
+        {
+            int roll = Random.Range(1, 101);
+            if (roll <= itemSpawnPercent)
+            {
+                int itemIndex = Random.Range(0, randomItems.Length);
+                GameObject goItem = Instantiate(randomItems[itemIndex], hitFloor.transform.position, Quaternion.identity) as GameObject;
+                goItem.name = randomItems[itemIndex].name;
+                goItem.transform.SetParent(hitFloor.transform);
             }
         }
     }
