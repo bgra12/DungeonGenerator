@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8657991444589764082}
   - component: {fileID: 1027101993502660325}
   - component: {fileID: 8997349804111272158}
+  - component: {fileID: 467834262051295653}
   m_Layer: 9
   m_Name: R_Wizard
   m_TagString: Untagged
@@ -107,3 +108,19 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.8, y: 0.8}
   m_EdgeRadius: 0
+--- !u!114 &467834262051295653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9148898672387662581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 806c57bbb9aff7f4aaf01147554aa30b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  alertRange: 5
+  patrolInterval: {x: 1, y: 5}
+  chaseSpeed: 1
+  damageRange: {x: 1, y: 10}

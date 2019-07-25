@@ -216,8 +216,8 @@ MonoBehaviour:
     type: 3}
   totalFloorCount: 294
   itemSpawnPercent: 6
-  enemySpawnPercent: 0
-  dungeonType: 2
+  enemySpawnPercent: 12
+  dungeonType: 0
   minX: 0
   maxX: 0
   minY: 0
