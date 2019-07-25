@@ -35,36 +35,11 @@ public class DungeonManager : MonoBehaviour
     {
         Vector3 currentPos = Vector3.zero;
         floorPosList.Add(currentPos);
-
         //create position list randomly
         while (floorPosList.Count < totalFloorCount)
         {
-            switch (Random.Range(1, 5))
-            {
-            case 1:
-                currentPos += Vector3.up;
-                break;
-            case 2:
-                currentPos += Vector3.right;
-                break;
-            case 3:
-                currentPos += Vector3.down;
-                break;
-            case 4:
-                currentPos += Vector3.left;
-                break;
-            }
-            //check if randomly generated position is already in the list if so don't add it
-            bool inFloorList = false;
-            for (int i = 0; i < floorPosList.Count; i++)
-            {
-                if (Vector3.Equals(currentPos, floorPosList[i]))
-                {
-                    inFloorList = true;
-                    break;
-                }
-            }
-            if (!inFloorList)
+            currentPos += RandomDirection();
+            if (!CheckIfInFloorList(currentPos))
             {
                 floorPosList.Add(currentPos);
             }
@@ -77,6 +52,35 @@ public class DungeonManager : MonoBehaviour
             goTile.transform.SetParent(transform);
         }
         StartCoroutine(DelayProgress());
+    }
+
+    private bool CheckIfInFloorList(Vector3 position)
+    {
+        //check if randomly generated position is already in the list if so don't add it
+        for (int i = 0; i < floorPosList.Count; i++)
+        {
+            if (Vector3.Equals(position, floorPosList[i]))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Vector3 RandomDirection()
+    {
+        switch (Random.Range(1, 5))
+        {
+        case 1:
+            return Vector3.up;
+        case 2:
+            return Vector3.right;
+        case 3:
+            return Vector3.down;
+        case 4:
+            return Vector3.left;
+        }
+        return Vector3.zero;
     }
 
     private IEnumerator DelayProgress()
@@ -110,7 +114,7 @@ public class DungeonManager : MonoBehaviour
 
     private void SpawnRandomEnemies(Collider2D hitFloor, Collider2D hitTop, Collider2D hitRight, Collider2D hitBottom, Collider2D hitLeft)
     {
-        if(!hitTop && !hitBottom && !hitLeft && !hitRight)
+        if (!hitTop && !hitBottom && !hitLeft && !hitRight)
         {
             int roll = Random.Range(1, 101);
             if (roll <= enemySpawnPercent)

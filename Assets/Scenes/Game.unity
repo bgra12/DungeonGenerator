@@ -216,7 +216,7 @@ MonoBehaviour:
     type: 3}
   totalFloorCount: 434
   itemSpawnPercent: 63
-  enemySpawnPercent: 24
+  enemySpawnPercent: 0
   minX: 0
   maxX: 0
   minY: 0
