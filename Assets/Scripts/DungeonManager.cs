@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public enum DungeonType { Caverns, Rooms, Winding }
+
 public class DungeonManager : MonoBehaviour
 {
     public GameObject[] randomItems, randomEnemies;
@@ -10,6 +12,7 @@ public class DungeonManager : MonoBehaviour
     [Range(50, 1000)] public int totalFloorCount;
     [Range(0, 100)] public int itemSpawnPercent;
     [Range(0, 100)] public int enemySpawnPercent;
+    public DungeonType dungeonType;
 
     [HideInInspector] public float minX, maxX, minY, maxY;
 
@@ -20,7 +23,19 @@ public class DungeonManager : MonoBehaviour
     {
         floorMask = LayerMask.GetMask("Floor");
         wallMask = LayerMask.GetMask("Wall");
-        RandomWalker();
+
+        switch (dungeonType)
+        {
+        case DungeonType.Caverns:
+            CavernWalker();
+            break;
+        case DungeonType.Rooms:
+            RoomWalker();
+            break;
+        case DungeonType.Winding:
+            WindingWalker();
+            break;
+        }
     }
 
     private void Update()
@@ -31,7 +46,7 @@ public class DungeonManager : MonoBehaviour
         }
     }
 
-    private void RandomWalker()
+    private void CavernWalker()
     {
         Vector3 currentPos = Vector3.zero;
         floorPosList.Add(currentPos);
@@ -44,14 +59,69 @@ public class DungeonManager : MonoBehaviour
                 floorPosList.Add(currentPos);
             }
         }
-        //create tiles on the each position in the list
-        for (int i = 0; i < floorPosList.Count; i++)
+        StartCoroutine(DelayProgress());
+    }
+
+    private void RoomWalker()
+    {
+        Vector3 currentPos = Vector3.zero;
+        floorPosList.Add(currentPos);
+        //create position list randomly
+        while (floorPosList.Count < totalFloorCount)
         {
-            GameObject goTile = Instantiate(tilePrefab, floorPosList[i], Quaternion.identity) as GameObject;
-            goTile.name = tilePrefab.name;
-            goTile.transform.SetParent(transform);
+            currentPos = PickARandomDirectionAndWalk(currentPos);
+            CreateRandomRoomAtCurrentPosition(currentPos); //create random room after long walk
         }
         StartCoroutine(DelayProgress());
+    }
+
+    private void WindingWalker()
+    {
+        Vector3 currentPos = Vector3.zero;
+        floorPosList.Add(currentPos);
+        //create position list randomly
+        while (floorPosList.Count < totalFloorCount)
+        {
+            currentPos = PickARandomDirectionAndWalk(currentPos);
+            int roll = Random.Range(0, 101);
+            if (roll > 50)
+            {
+                CreateRandomRoomAtCurrentPosition(currentPos); //create random room after long walk
+            }
+        }
+        StartCoroutine(DelayProgress());
+    }
+
+    private void CreateRandomRoomAtCurrentPosition(Vector3 currentPos)
+    {
+        int width = Random.Range(1, 5);
+        int height = Random.Range(1, 5);
+        for (int w = -width; w <= width; w++)
+        {
+            for (int h = -height; h <= height; h++)
+            {
+                Vector3 offSet = new Vector3(w, h, 0);
+                if (!CheckIfInFloorList(currentPos + offSet))
+                {
+                    floorPosList.Add(currentPos + offSet);
+                }
+            }
+        }
+    }
+
+    private Vector3 PickARandomDirectionAndWalk(Vector3 currentPos)
+    {
+        Vector3 walkDir = RandomDirection();
+        int walkLength = Random.Range(9, 18);
+        for (int i = 0; i < walkLength; i++)
+        {
+            if (!CheckIfInFloorList(currentPos + walkDir))
+            {
+                floorPosList.Add(currentPos + walkDir);
+            }
+            currentPos += walkDir;
+        }
+        return currentPos;
     }
 
     private bool CheckIfInFloorList(Vector3 position)
@@ -85,6 +155,13 @@ public class DungeonManager : MonoBehaviour
 
     private IEnumerator DelayProgress()
     {
+        //create tiles on the each position in the list
+        for (int i = 0; i < floorPosList.Count; i++)
+        {
+            GameObject goTile = Instantiate(tilePrefab, floorPosList[i], Quaternion.identity) as GameObject;
+            goTile.name = tilePrefab.name;
+            goTile.transform.SetParent(transform);
+        }
         while (FindObjectsOfType<TileSpawner>().Length > 0)
         {
             yield return null;
