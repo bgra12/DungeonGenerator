@@ -5,15 +5,20 @@ using UnityEngine.SceneManagement;
 
 public class DungeonManager : MonoBehaviour
 {
+    public GameObject[] randomItems;
     public GameObject floorPrefab, wallPrefab, tilePrefab, exitPrefab;
-    public int totalFloorCount;
+    [Range(50, 1000)] public int totalFloorCount;
+    [Range(0, 100)] public int itemSpawnPercent;
 
     [HideInInspector] public float minX, maxX, minY, maxY;
 
     private List<Vector3> floorPosList = new List<Vector3>();
+    LayerMask floorMask, wallMask;
 
     private void Start()
     {
+        floorMask = LayerMask.GetMask("Floor");
+        wallMask = LayerMask.GetMask("Wall");
         RandomWalker();
     }
 
@@ -64,7 +69,7 @@ public class DungeonManager : MonoBehaviour
             }
         }
         //create tiles on the each position in the list
-        for(int i = 0; i < floorPosList.Count; i++)
+        for (int i = 0; i < floorPosList.Count; i++)
         {
             GameObject goTile = Instantiate(tilePrefab, floorPosList[i], Quaternion.identity) as GameObject;
             goTile.name = tilePrefab.name;
@@ -80,6 +85,40 @@ public class DungeonManager : MonoBehaviour
             yield return null;
         }
         CreateExitDoorway();
+        SpawnRandomItems();
+    }
+
+    private void SpawnRandomItems()
+    {
+        Vector2 hitSize = Vector2.one * 0.8f;
+        for (int x = (int)minX - 2; x <= (int)maxX + 2; x++)
+        {
+            for (int y = (int)minY - 2; y <= (int)maxY + 2; y++)
+            {
+                Collider2D hitFloor = Physics2D.OverlapBox(new Vector2(x, y), hitSize, 0, floorMask);
+                if (hitFloor)
+                {
+                    if (!Vector2.Equals(hitFloor.transform.position, floorPosList[floorPosList.Count - 1]))
+                    {
+                        Collider2D hitTop = Physics2D.OverlapBox(new Vector2(x, y + 1), hitSize, 0, wallMask);
+                        Collider2D hitRight = Physics2D.OverlapBox(new Vector2(x + 1, y), hitSize, 0, wallMask);
+                        Collider2D hitBottom = Physics2D.OverlapBox(new Vector2(x, y - 1), hitSize, 0, wallMask);
+                        Collider2D hitLeft = Physics2D.OverlapBox(new Vector2(x - 1, y), hitSize, 0, wallMask);
+                        if ((hitBottom || hitRight || hitBottom || hitLeft) && !(hitTop && hitBottom) && !(hitLeft && hitRight))
+                        {
+                            int roll = Random.Range(0, 101);
+                            if (roll <= itemSpawnPercent)
+                            {
+                                int itemIndex = Random.Range(0, randomItems.Length);
+                                GameObject goItem = Instantiate(randomItems[itemIndex], hitFloor.transform.position, Quaternion.identity) as GameObject;
+                                goItem.name = randomItems[itemIndex].name;
+                                goItem.transform.SetParent(hitFloor.transform);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void CreateExitDoorway()

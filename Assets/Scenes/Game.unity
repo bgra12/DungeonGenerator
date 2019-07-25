@@ -195,6 +195,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6ff2cd0b8e196d469453cb7d1005830, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  randomItems:
+  - {fileID: 1865484012064599033, guid: 7654ab759d821ae4cae1400ea7a14edd, type: 3}
+  - {fileID: 449290767652668899, guid: 4a238ce2a5955754f9d61d2f395829cf, type: 3}
+  - {fileID: 8723578258684669976, guid: c245b026e0020454c8c9203ecea28922, type: 3}
+  - {fileID: 3851545163244386595, guid: d55ed79118b3b784395582040208c67e, type: 3}
+  - {fileID: 758407102833233029, guid: ad82fd004b4db9d489bb53a9fe5071ce, type: 3}
   floorPrefab: {fileID: 9155209697208246640, guid: d14d391247bf17c4f996145030107e52,
     type: 3}
   wallPrefab: {fileID: 4502735025105210786, guid: 0af0dcb9251f13344b89b8b3e54bfe7e,
@@ -203,7 +209,8 @@ MonoBehaviour:
     type: 3}
   exitPrefab: {fileID: 7274915516184938232, guid: 31841ba169ea08849a54e3f36b3e0859,
     type: 3}
-  totalFloorCount: 50
+  totalFloorCount: 434
+  itemSpawnPercent: 63
   minX: 0
   maxX: 0
   minY: 0
