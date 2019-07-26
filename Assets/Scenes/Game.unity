@@ -215,7 +215,7 @@ MonoBehaviour:
   exitPrefab: {fileID: 7274915516184938232, guid: 31841ba169ea08849a54e3f36b3e0859,
     type: 3}
   totalFloorCount: 294
-  itemSpawnPercent: 6
+  itemSpawnPercent: 10
   enemySpawnPercent: 12
   dungeonType: 0
   minX: 0
